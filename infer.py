@@ -1,5 +1,6 @@
 import json
 import math
+import matplotlib.pyplot as plt  # ← 追加
 
 def load_machine(path: str):
     with open(path, "r", encoding="utf-8") as f:
@@ -28,6 +29,19 @@ def infer_setting(machine, n_games: int, n_big: int, n_reg: int):
     total = sum(weights.values())
     return {s: w / total for s, w in weights.items()}
 
+def plot_probs(probs: dict):
+    settings = list(probs.keys())
+    values = [probs[s] * 100 for s in settings]
+
+    plt.figure(figsize=(6, 4))
+    plt.bar(range(len(settings)), values, tick_label=settings)
+    plt.xlabel("設定")
+    plt.ylabel("推定確率（%）")
+    plt.title("設定別 推定確率")
+    plt.grid(axis="y", alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
 def main():
     print("=== パチスロ設定推測ツール（拡張版） ===")
     machine_path = input("機種データ(JSON)のパスを入力してください: ")
@@ -48,6 +62,8 @@ def main():
     best = max(probs, key=probs.get)
     print(f"\n最も可能性が高いのは『設定{best}』です。")
 
+    # グラフ表示
+    plot_probs(probs)
+
 if __name__ == "__main__":
     main()
-
