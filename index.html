@@ -65,6 +65,54 @@
     canvas {
       margin-top: 16px;
     }
+
+    /* ？ボタン */
+    #info-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    /* モーダル背景 */
+    #info-modal.hidden {
+      display: none;
+    }
+
+    #info-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    /* モーダル内容 */
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 480px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      font-size: 14px;
+      line-height: 1.6;
+    }
   </style>
 
   <!-- Chart.js（グラフ用CDN） -->
@@ -103,5 +151,45 @@
       navigator.serviceWorker.register("service-worker.js");
     }
   </script>
+
+  <!-- ？ボタン -->
+  <div id="info-btn">？</div>
+
+  <!-- モーダル本体 -->
+  <div id="info-modal" class="hidden">
+    <div class="modal-content">
+      <h2>このアプリについて</h2>
+      <p>
+        <strong>パチスロ設定推測ツール（Web版）</strong> は、各機種の設定ごとのボーナス確率（BIG・REG）をもとに、
+        入力されたゲーム数・ボーナス回数から設定の可能性を統計的に推測するツールです。<br><br>
+        本ツールは確率計算に基づく参考情報を提供するものであり、実際の設定や結果を保証するものではありません。
+        遊技結果や設定判別の最終判断は、利用者ご自身の責任で行ってください。
+      </p>
+
+      <h2>免責事項</h2>
+      <p>
+        ・本アプリは遊技結果や設定を保証するものではありません。<br>
+        ・表示される推測結果は統計的な参考値であり、実際の設定・挙動とは異なる場合があります。<br>
+        ・本アプリの利用により生じたいかなる損害・損失についても、開発者は一切の責任を負いません。<br>
+        ・データは外部情報を含む場合がありますが、正確性を保証するものではありません。<br>
+        ・ご利用は自己責任でお願いいたします。
+      </p>
+
+      <button id="close-info">閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    // ===============================
+    // 説明・免責モーダル
+    // ===============================
+    document.getElementById("info-btn").onclick = () => {
+      document.getElementById("info-modal").classList.remove("hidden");
+    };
+    document.getElementById("close-info").onclick = () => {
+      document.getElementById("info-modal").classList.add("hidden");
+    };
+  </script>
+
 </body>
 </html>
