@@ -1,10 +1,6 @@
-// machines フォルダ内の JSON ファイル一覧（手動で列挙）
-const MACHINE_FILES = [
-  "machines/new_king_hanahana_v30.json",
-  "machines/my_juggler_v.json"
-];
-
-let machines = [];      // { file, data } の配列
+// ▼ machines/machines.json に一覧をまとめる方式に変更
+let MACHINE_FILES = [];   // ← ここは空でOK
+let machines = [];        // { file, data } の配列
 let currentChart = null;
 
 // ▼ 二項分布の対数尤度
@@ -13,7 +9,7 @@ function logLikelihood(nGames, nHit, p) {
   return nHit * Math.log(p) + (nGames - nHit) * Math.log(1 - p);
 }
 
-// ▼ 設定推測ロジック（Python と同じ）
+// ▼ 設定推測ロジック
 function inferSetting(machine, nGames, nBig, nReg) {
   const logLs = {};
 
@@ -49,9 +45,7 @@ function drawChart(probs) {
   const labels = Object.keys(probs);
   const values = labels.map(s => probs[s] * 100);
 
-  if (currentChart) {
-    currentChart.destroy();
-  }
+  if (currentChart) currentChart.destroy();
 
   currentChart = new Chart(ctx, {
     type: "bar",
@@ -68,9 +62,7 @@ function drawChart(probs) {
       scales: {
         y: {
           beginAtZero: true,
-          ticks: {
-            callback: value => value + "%"
-          }
+          ticks: { callback: value => value + "%" }
         }
       }
     }
@@ -85,7 +77,7 @@ function showResult(machine, probs) {
   html += "<div>--- 推測結果 ---</div>";
 
   for (const [s, p] of entries) {
-    html += `<div>設定${s}: ${ (p * 100).toFixed(2) }%</div>`;
+    html += `<div>設定${s}: ${(p * 100).toFixed(2)}%</div>`;
   }
 
   const best = entries.reduce((a, b) => (a[1] > b[1] ? a : b))[0];
@@ -94,8 +86,20 @@ function showResult(machine, probs) {
   resultArea.innerHTML = html;
 }
 
+// ▼ machines/machines.json を読み込む
+async function loadMachineList() {
+  try {
+    const res = await fetch("machines/machines.json");
+    MACHINE_FILES = await res.json();   // ← JSON 配列をそのまま代入
+  } catch (e) {
+    console.error("machines.json の読み込み失敗", e);
+  }
+}
+
 // ▼ 機種 JSON を読み込んでセレクトに反映
 async function loadMachines() {
+  await loadMachineList();  // ← まず一覧を読み込む
+
   const select = document.getElementById("machineSelect");
   select.innerHTML = "";
 
