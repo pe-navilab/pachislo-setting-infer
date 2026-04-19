@@ -117,6 +117,13 @@ async function loadMachines() {
     select.innerHTML = '<option value="">機種データが読み込めませんでした</option>';
     return;
   }
+  // ★ ここで「あいうえお順・英数順」にソートする
+  machines.sort((a, b) => {
+    return a.data.name.localeCompare(b.data.name, "ja", {
+      sensitivity: "base",
+      numeric: true
+    });
+  });
 
   select.innerHTML = '<option value="">機種を選択してください</option>';
   machines.forEach((m, idx) => {
