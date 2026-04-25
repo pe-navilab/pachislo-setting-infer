@@ -5,11 +5,9 @@
   <title>パチスロ設定推測ツール（Web版）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- PWA 用 -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1976d2">
 
-  <!-- シンプルなスタイル -->
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Yu Gothic", sans-serif;
@@ -35,7 +33,7 @@
       margin-top: 12px;
       font-weight: bold;
     }
-    select, input {
+    select, input, button {
       width: 100%;
       padding: 8px;
       margin-top: 4px;
@@ -43,10 +41,6 @@
       font-size: 16px;
     }
     button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 10px;
-      font-size: 16px;
       background: #1976d2;
       color: #fff;
       border: none;
@@ -65,57 +59,9 @@
     canvas {
       margin-top: 16px;
     }
-
-    #info-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      width: 48px;
-      height: 48px;
-      background: white;
-      border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      cursor: pointer;
-      z-index: 9999;
-    }
-
-    #info-modal.hidden {
-      display: none;
-    }
-
-    #info-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 480px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      font-size: 14px;
-      line-height: 1.6;
-    }
   </style>
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Tesseract.js（OCR） -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
 </head>
@@ -137,13 +83,16 @@
     <label for="regInput">REG回数</label>
     <input id="regInput" type="number" min="0" placeholder="例：4">
 
-    <!-- ▼ 写真アップロード -->
+    <!-- ギャラリーから選択 -->
     <label for="photoInput">写真から読み取る（ギャラリー）</label>
     <input id="photoInput" type="file" accept="image/*">
 
-    <!-- ▼ スマホカメラ起動 -->
+    <!-- カメラ起動 -->
     <label for="cameraInput">スマホカメラで撮影して読み取る</label>
     <input id="cameraInput" type="file" accept="image/*" capture="environment">
+
+    <!-- ★ 画像読み取りボタン（再読み取り用） -->
+    <button id="readImageButton">画像を読み取る</button>
 
     <button id="inferButton" disabled>推測する</button>
 
@@ -158,35 +107,6 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
-  </script>
-
-  <div id="info-btn">？</div>
-
-  <div id="info-modal" class="hidden">
-    <div class="modal-content">
-      <h2>このアプリについて</h2>
-      <p>
-        <strong>パチスロ設定推測ツール（Web版）</strong> は、各機種の設定ごとのボーナス確率（BIG・REG）をもとに、
-        入力されたゲーム数・ボーナス回数から設定の可能性を統計的に推測するツールです。
-      </p>
-
-      <h2>免責事項</h2>
-      <p>
-        ・本アプリは遊技結果や設定を保証するものではありません。<br>
-        ・表示される推測結果は統計的な参考値であり、実際の設定・挙動とは異なる場合があります。
-      </p>
-
-      <button id="close-info">閉じる</button>
-    </div>
-  </div>
-
-  <script>
-    document.getElementById("info-btn").onclick = () => {
-      document.getElementById("info-modal").classList.remove("hidden");
-    };
-    document.getElementById("close-info").onclick = () => {
-      document.getElementById("info-modal").classList.add("hidden");
-    };
   </script>
 
 </body>
