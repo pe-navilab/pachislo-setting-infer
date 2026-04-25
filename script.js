@@ -180,7 +180,7 @@ async function processImageForOCR(file) {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let data = imageData.data;
 
-  const contrast = 1.4; // ← 調整可能
+  const contrast = 1.15; // ← 調整可能
 
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i];
