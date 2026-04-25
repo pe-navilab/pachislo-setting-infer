@@ -157,20 +157,55 @@ function setupEvents() {
   });
 }
 
-// ▼ OCR 共通処理
+// ▼ OCR 前処理付き
 async function processImageForOCR(file) {
   if (!file) {
     alert("画像が選択されていません。");
     return;
   }
 
-  const { data: { text } } = await Tesseract.recognize(file, 'jpn');
+  // ▼ 画像読み込み
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  await new Promise(resolve => img.onload = resolve);
+
+  // ▼ canvas で前処理（グレースケール＋コントラスト補正）
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  ctx.drawImage(img, 0, 0);
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let data = imageData.data;
+
+  const contrast = 1.4; // ← 調整可能
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+
+    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+    const newGray = Math.min(255, Math.max(0, (gray - 128) * contrast + 128));
+
+    data[i] = data[i + 1] = data[i + 2] = newGray;
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+
+  // ▼ PNG に変換して OCR に渡す
+  const processedBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+  const { data: { text } } = await Tesseract.recognize(processedBlob, 'jpn');
 
   const result = extractTodayData(text);
 
-  if (result.games) document.getElementById("gamesInput").value = result.games;
-  if (result.big)   document.getElementById("bigInput").value = result.big;
-  if (result.reg)   document.getElementById("regInput").value = result.reg;
+  // ▼ 1つでも分かったら入力
+  if (result.games !== null) document.getElementById("gamesInput").value = result.games;
+  if (result.big   !== null) document.getElementById("bigInput").value   = result.big;
+  if (result.reg   !== null) document.getElementById("regInput").value   = result.reg;
 }
 
 // ▼ 写真添付時に自動読み取り
@@ -183,7 +218,7 @@ document.getElementById("cameraInput").addEventListener("change", async (e) => {
   await processImageForOCR(e.target.files[0]);
 });
 
-// ▼ ★ 画像読み取りボタン（再読み取り）
+// ▼ 画像読み取りボタン（再読み取り）
 document.getElementById("readImageButton").addEventListener("click", async () => {
   const photoFile = document.getElementById("photoInput").files[0];
   const cameraFile = document.getElementById("cameraInput").files[0];
@@ -193,7 +228,7 @@ document.getElementById("readImageButton").addEventListener("click", async () =>
   await processImageForOCR(file);
 });
 
-// ▼ 当日データだけ抽出する関数
+// ▼ 当日データだけ抽出
 function extractTodayData(text) {
   const lines = text.split('\n').map(l => l.trim());
 
