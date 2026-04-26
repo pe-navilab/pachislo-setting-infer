@@ -21,7 +21,7 @@ async function initPaddleOCR() {
   const PaddleOCR = module.PaddleOCR;
 
   ocr = await PaddleOCR.create({
-    lang: "japan"   // 日本語モデル（数字にも強い）
+    lang: "en"   // 日本語モデル（数字にも強い）
   });
 
   console.log("PaddleOCR.js 初期化完了");
