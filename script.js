@@ -243,7 +243,29 @@ function extractTodayData(text) {
   const regKeywords = ["REG", "RB", "REG BONUS", "レギュラー"];
   const gameKeywords = ["総回転", "総回転数", "累計", "累計ゲーム", "総数", "ゲーム数", "回転数", "TOTAL", "TOTAL GAME"];
 
-  for (let line of lines) {
+  // ▼ 数字抽出（近接行対応）
+  function extractNearbyNumber(lines, index) {
+    // 現在の行
+    let num = parseInt(lines[index].replace(/[^0-9]/g, ""));
+    if (!isNaN(num)) return num;
+
+    // 次の行
+    if (index + 1 < lines.length) {
+      num = parseInt(lines[index + 1].replace(/[^0-9]/g, ""));
+      if (!isNaN(num)) return num;
+    }
+
+    // さらに次の行
+    if (index + 2 < lines.length) {
+      num = parseInt(lines[index + 2].replace(/[^0-9]/g, ""));
+      if (!isNaN(num)) return num;
+    }
+
+    return null;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
 
     // ▼ 本日ブロック開始
     if (line.includes("本日") || line.includes("今日") || line.includes("当日")) {
@@ -257,23 +279,24 @@ function extractTodayData(text) {
     }
 
     // ▼ 当日ブロック内の BIG 判定
-    if (inToday) {
+    if (inToday && big === null) {
       if (bigKeywords.some(k => line.toUpperCase().includes(k.toUpperCase()))) {
-        const num = parseInt(line.replace(/[^0-9]/g, ""));
-        if (!isNaN(num)) big = num;
+        big = extractNearbyNumber(lines, i);
       }
+    }
 
-      // ▼ REG 判定
+    // ▼ REG 判定
+    if (inToday && reg === null) {
       if (regKeywords.some(k => line.toUpperCase().includes(k.toUpperCase()))) {
-        const num = parseInt(line.replace(/[^0-9]/g, ""));
-        if (!isNaN(num)) reg = num;
+        reg = extractNearbyNumber(lines, i);
       }
     }
 
     // ▼ 総回転数（ゲーム数）判定
-    if (gameKeywords.some(k => line.toUpperCase().includes(k.toUpperCase()))) {
-      const num = parseInt(line.replace(/[^0-9]/g, ""));
-      if (!isNaN(num)) games = num;
+    if (games === null) {
+      if (gameKeywords.some(k => line.toUpperCase().includes(k.toUpperCase()))) {
+        games = extractNearbyNumber(lines, i);
+      }
     }
   }
 
