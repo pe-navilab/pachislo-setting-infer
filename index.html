@@ -81,9 +81,6 @@
   <!-- ▼ Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- ▼ PaddleOCR WASM（日本語モデル対応） -->
-  <script src="https://cdn.jsdelivr.net/npm/paddleocr-wasm/dist/paddleocr.js"></script>
-
 </head>
 <body>
 
@@ -127,8 +124,8 @@
     <canvas id="chartCanvas"></canvas>
   </div>
 
-  <!-- ▼ PaddleOCR 対応版 script.js -->
-  <script src="script.js"></script>
+  <!-- ▼ PaddleOCR.js（新SDK）対応版 script.js -->
+  <script type="module" src="script.js"></script>
 
   <script>
     if ("serviceWorker" in navigator) {
