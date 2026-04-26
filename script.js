@@ -17,7 +17,7 @@ async function initPaddleOCR() {
   if (ocr) return;
 
   // CDN から PaddleOCR.js を読み込む
-  const module = await import("https://cdn.jsdelivr.net/npm/paddleocrjs@1.0.3/dist/ocr.js");
+  const module = await import("https://esm.run/paddleocrjs@1.0.3");
   const PaddleOCR = module.PaddleOCR;
 
   ocr = await PaddleOCR.create({
