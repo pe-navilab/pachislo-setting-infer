@@ -6,37 +6,69 @@
   <title>パチスロ設定推測ツール</title>
 
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ▼ 中央揃えレイアウト -->
+  <style>
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      font-family: sans-serif;
+      padding: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      margin-top: 6px;
+      font-size: 16px;
+    }
+
+    #chartCanvas {
+      margin-top: 20px;
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 24px;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+  </style>
 </head>
 
 <body>
 
 <h2>パチスロ設定推測ツール</h2>
 
-<div>
-  <label>機種選択：</label>
-  <select id="machineSelect"></select>
-</div>
+<!-- ▼ 機種選択 -->
+<label>機種選択：</label>
+<select id="machineSelect"></select>
 
-<div>
-  <label>総回転：</label>
-  <input id="gamesInput" type="number">
-</div>
+<!-- ▼ 入力欄 -->
+<label>総回転：</label>
+<input id="gamesInput" type="number">
 
-<div>
-  <label>BIG：</label>
-  <input id="bigInput" type="number">
-</div>
+<label>BIG：</label>
+<input id="bigInput" type="number">
 
-<div>
-  <label>REG：</label>
-  <input id="regInput" type="number">
-</div>
+<label>REG：</label>
+<input id="regInput" type="number">
 
 <hr>
 
+<!-- ▼ 画像読み取り -->
 <label for="photoInput">画像を選択して読み取る</label>
 <input id="photoInput" type="file" accept="image/*">
 
@@ -46,19 +78,14 @@
 <button id="readImageButton">画像を読み取る</button>
 <button id="inferButton" disabled>推測する</button>
 
-<div id="loadingOverlay" style="
-  display:none;
-  position:fixed;
-  top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,0.5);
-  color:white; font-size:24px;
-  justify-content:center; align-items:center;
-">読み取り中...</div>
+<!-- ▼ ローディング -->
+<div id="loadingOverlay">読み取り中...</div>
 
+<!-- ▼ 結果 -->
 <div class="result" id="resultArea"></div>
 <canvas id="chartCanvas"></canvas>
 
-<!-- ▼ ここが最重要：正しい script 読み込み -->
+<!-- ▼ PaddleOCR.js（新SDK） -->
 <script type="module" src="script.js"></script>
 
 <script>
